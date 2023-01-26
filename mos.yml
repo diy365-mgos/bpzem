@@ -1,0 +1,19 @@
+author: DIY365
+type: lib
+description: bPZEM 014/016 Mongoose OS library
+version: 1.0
+
+sources:
+  - src
+includes:
+  - include
+filesystem:
+  - fs
+config_schema:
+libs:
+
+tags:
+  - c
+  - docs:misc:bPZEM
+
+manifest_version: 2017-09-29
