@@ -4,11 +4,12 @@
 
 struct mg_bpzem {
   int uart_no;
-}
+  enum mgos_bpzem_type bpzem_type;
+};
 
-mgos_bpzem_t mgos_bpzem_create(enum mgos_bpzem_type type) {
+mgos_bpzem_t mgos_bpzem_create(enum mgos_bpzem_type bpzem_type); {
   // check if the type is correct
-  switch (type) {
+  switch (bpzem_type) {
     case MGOS_BPZEM_014:
     case MGOS_BPZEM_016:
       break;
@@ -33,6 +34,7 @@ mgos_bpzem_t mgos_bpzem_create(enum mgos_bpzem_type type) {
   if (instance)
   {
     instance->uart_no = uart_no;
+    instance->bpzem_type = bpzem_type;
   }
   return (mgos_bpzem_t)instance;
 }

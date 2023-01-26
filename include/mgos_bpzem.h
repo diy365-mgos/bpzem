@@ -24,17 +24,17 @@
 extern "C" {
 #endif
 
-struct mg_bpzem;
-
-/* Generic and opaque bPZEM instance */
-typedef struct mg_bpzem *mgos_bpzem_t;
-
 enum mgos_bpzem_type {
   MGOS_BPZEM_014 = 14,
   MGOS_BPZEM_016 = 16,
 };
 
-mgos_bpzem_t mgos_bpzem_create(enum mgos_bpzem_type type);
+struct mg_bpzem;
+
+/* Generic and opaque bPZEM instance */
+typedef struct mg_bpzem *mgos_bpzem_t;
+
+mgos_bpzem_t mgos_bpzem_create(enum mgos_bpzem_type bpzem_type);
 
 #ifdef __cplusplus
 }
