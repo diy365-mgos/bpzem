@@ -10,6 +10,9 @@ includes:
 filesystem:
   - fs
 config_schema:
+  - ["debug.stdout_uart", 1]
+  - ["debug.stderr_uart", 1]
+
 libs:
 
 tags:
