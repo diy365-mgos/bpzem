@@ -7,7 +7,7 @@ struct mg_bpzem {
   enum mgos_bpzem_type bpzem_type;
 };
 
-mgos_bpzem_t mgos_bpzem_create(enum mgos_bpzem_type bpzem_type); {
+mgos_bpzem_t mgos_bpzem_create(enum mgos_bpzem_type bpzem_type) {
   // check if the type is correct
   switch (bpzem_type) {
     case MGOS_BPZEM_014:
