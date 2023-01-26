@@ -1,3 +1,3 @@
-# bPZEM 014/016 library
+# bPZEM 014/016 Library
 ## Overview
 _work in progress_
