@@ -14,19 +14,8 @@ config_schema:
   - ["bpzem", "o", {title: "bPZEM settings"}]
   - ["bpzem.init_modbus", "b", true, {title: "Initialize modbus connection"}]
 
-conds:
-  - when: mos.platform == "esp8266"
-    apply:
-      config_schema:
-        - ["modbus.uart_no", 0]
-        - ["modbus.tx_en_enable", false]
-        - ["modbus.uart_tx_pin", 1]
-        - ["modbus.uart_rx_pin", 3]
-        - ["debug.stdout_uart", 1]
-        - ["debug.stderr_uart", 1]
-
 libs:
-  - origin: https://github.com/mongoose-os-libs/modbus
+  - origin: https://github.com/diy365-mgos/modbus
 
 tags:
   - c
