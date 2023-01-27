@@ -19,7 +19,6 @@
 #define MGOS_BPZEM_H_
 
 #include <stdbool.h>
-#include "mgos_modbus.h"
 
 #ifdef __cplusplus
 extern "C" {
