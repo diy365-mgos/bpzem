@@ -20,8 +20,8 @@ conds:
       config_schema:
         - ["modbus.uart_no", 0]
         - ["modbus.tx_en_enable", false]
-        - ["modbus.uart_tx_pin", "i", 1]
-        - ["modbus.uart_rx_pin", "i", 3]
+        - ["modbus.uart_tx_pin", 1]
+        - ["modbus.uart_rx_pin", 3]
         - ["debug.stdout_uart", 1]
         - ["debug.stderr_uart", 1]
 
