@@ -3,11 +3,11 @@
 #include "mgos_bpzem.h"
 
 struct mg_bpzem {
-  int uart_no;
   enum mgos_bpzem_type bpzem_type;
+  uint8_t slave_id;
 };
 
-mgos_bpzem_t mgos_bpzem_create(enum mgos_bpzem_type bpzem_type) {
+mgos_bpzem_t mgos_bpzem_create(uint8_t slave_id, enum mgos_bpzem_type bpzem_type) {
   // check if the type is correct
   switch (bpzem_type) {
     case MGOS_BPZEM_014:
@@ -17,28 +17,20 @@ mgos_bpzem_t mgos_bpzem_create(enum mgos_bpzem_type bpzem_type) {
       return NULL; // wrong type
   }
 
-  int uart_no = 0;
-  struct mgos_uart_config ucfg;
-  mgos_uart_config_set_defaults(uart_no, &ucfg);
-
-  ucfg.baud_rate = 9600;
-  ucfg.num_data_bits = 8;
-  ucfg.parity = MGOS_UART_PARITY_NONE;
-  ucfg.stop_bits = MGOS_UART_STOP_BITS_1;
-
-  if (!mgos_uart_configure(uart_no, &ucfg)) {
-    LOG(LL_ERROR, ("Failed to configure UART%d", uart_no));
-  }
-
   struct mg_bpzem *instance = calloc(1, sizeof(struct mg_bpzem));
-  if (instance)
-  {
-    instance->uart_no = uart_no;
+  if (instance) {
     instance->bpzem_type = bpzem_type;
+    instance->slave_id = slave_id;
   }
   return (mgos_bpzem_t)instance;
 }
 
+
 bool mgos_bpzem_init(void) {
+  if (mgos_sys_config_get_bpzem_init_modbus()) {
+    if (!mgos_modbus_connect()) {
+      return false;
+    }
+  }
   return true;
 }

@@ -19,10 +19,13 @@
 #define MGOS_BPZEM_H_
 
 #include <stdbool.h>
+#include "mgos_modbus.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#define MGOS_BPZEM_DEFAULT_ADDR 0xF8
 
 enum mgos_bpzem_type {
   MGOS_BPZEM_014 = 14,
@@ -34,7 +37,7 @@ struct mg_bpzem;
 /* Generic and opaque bPZEM instance */
 typedef struct mg_bpzem *mgos_bpzem_t;
 
-mgos_bpzem_t mgos_bpzem_create(enum mgos_bpzem_type bpzem_type);
+mgos_bpzem_t mgos_bpzem_create(uint8_t slave_id, enum mgos_bpzem_type bpzem_type);
 
 #ifdef __cplusplus
 }

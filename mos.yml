@@ -10,13 +10,26 @@ includes:
 filesystem:
   - fs
 config_schema:
-  - ["debug.stdout_uart", 1]
-  - ["debug.stderr_uart", 1]
+  - ["modbus.enable", true]
+  - ["bpzem", "o", {title: "bPZEM settings"}]
+  - ["bpzem.init_modbus", "b", true, {title: "Initialize modbus connection"}]
+
+conds:
+  - when: mos.platform == "esp8266"
+    apply:
+      config_schema:
+        - ["modbus.uart_no", 0]
+        - ["modbus.tx_en_enable", false]
+        - ["modbus.uart_tx_pin", "i", 1]
+        - ["modbus.uart_rx_pin", "i", 3]
+        - ["debug.stdout_uart", 1]
+        - ["debug.stderr_uart", 1]
 
 libs:
+  - origin: https://github.com/mongoose-os-libs/modbus
 
 tags:
   - c
-  - docs:misc:bPZEM
+  - docs:driver:PZEM
 
 manifest_version: 2017-09-29
