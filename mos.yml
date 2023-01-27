@@ -15,7 +15,7 @@ config_schema:
   - ["bpzem.init_modbus", "b", true, {title: "Initialize modbus connection"}]
 
 libs:
-  - origin: https://github.com/diy365-mgos/modbus
+  - location: https://github.com/diy365-mgos/modbus
 
 tags:
   - c
