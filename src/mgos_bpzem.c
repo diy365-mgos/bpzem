@@ -17,8 +17,10 @@ static void print_buffer(struct mg_bpzem* instance, struct mbuf buffer, uint8_t 
   }
   if (status == RESP_SUCCESS) {
     LOG(LL_INFO, ("%f - VALID RESPONSE, Status: %d, Buffer: %.*s", mgos_uptime(), status, length, str));
+    mgos_gpio_blink(2, 1200, 1200);
   } else {
     LOG(LL_INFO, ("%f - Invalid response, Status: %d, Buffer: %.*s", mgos_uptime(), status, length, str));
+    mgos_gpio_blink(2, 0, 0);
   }
   (void) instance;
 }
@@ -31,7 +33,8 @@ void mg_bpzem_read_response_handler(uint8_t status, struct mb_request_info mb_ri
 
 void mg_bpzem_timer_cb(void* param) {
   struct mg_bpzem* instance = (struct mg_bpzem*)param;
-  mb_read_holding_registers(instance->slave_id, 0xF8, 8, mg_bpzem_read_response_handler, instance);
+  mgos_gpio_blink(2, 500, 500);
+  mb_read_input_registers(instance->slave_id, 0x0000, 8, mg_bpzem_read_response_handler, instance);
 }
 
 mgos_bpzem_t mgos_bpzem_create(uint8_t slave_id, enum mgos_bpzem_type bpzem_type) {
@@ -59,5 +62,6 @@ bool mgos_bpzem_init(void) {
       return false;
     }
   }
+  mgos_gpio_setup_output(2, 1);
   return true;
 }
