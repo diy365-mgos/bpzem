@@ -1,17 +1,15 @@
 #include "mgos.h"
 #include "mgos_uart.h"
-#include "mgos_bpzem.h"
 #include "mgos_modbus.h"
+#include "mgos_timers.h"
+#include "mgos_bpzem.h"
 
 struct mg_bpzem {
   enum mgos_bpzem_type bpzem_type;
   uint8_t slave_id;
 };
 
-void mg_bpzem_read_response_handler(uint8_t status, struct mb_request_info mb_ri, 
-                                    struct mbuf response, void* param) {
-  struct mg_bpzem *instance = (struct mg_bpzem *)param;
-  
+static void print_buffer(struct mg_bpzem* instance, struct mbuf buffer, uint8_t status) {
   char str[1024];
   int length = 0;
   for (int i = 0; i < buffer.len && i < sizeof(str) / 3; i++) {
@@ -22,10 +20,17 @@ void mg_bpzem_read_response_handler(uint8_t status, struct mb_request_info mb_ri
   } else {
     LOG(LL_INFO, ("%f - Invalid response, Status: %d, Buffer: %.*s", mgos_uptime(), status, length, str));
   }
+  (void) instance;
+}
+
+void mg_bpzem_read_response_handler(uint8_t status, struct mb_request_info mb_ri, 
+                                    struct mbuf response, void* param) {
+  struct mg_bpzem* instance = (struct mg_bpzem*)param;
+  print_buffer(instance, response, status);
 }
 
 void mg_bpzem_timer_cb(void* param) {
-  struct mg_bpzem *instance = (struct mg_bpzem *)param;
+  struct mg_bpzem* instance = (struct mg_bpzem*)param;
   mb_read_holding_registers(instance->slave_id, 0xF8, 8, mg_bpzem_read_response_handler, instance);
 }
 
