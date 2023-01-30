@@ -57,7 +57,7 @@ mgos_bpzem_t mgos_bpzem_create(uint8_t slave_id, enum mgos_bpzem_type bpzem_type
 }
 
 bool mgos_bpzem_init(void) {
-  if (mgos_sys_config_get_bpzem_init_modbus()) {
+  if (mgos_sys_config_get_modbus_enable()) {
     if (!mgos_modbus_connect()) {
       return false;
     }

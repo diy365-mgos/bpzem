@@ -11,8 +11,6 @@ filesystem:
   - fs
 config_schema:
   - ["modbus.enable", true]
-  - ["bpzem", "o", {title: "bPZEM settings"}]
-  - ["bpzem.init_modbus", "b", true, {title: "Initialize modbus connection"}]
 
 libs:
   - origin: https://github.com/diy365-mgos/modbus
