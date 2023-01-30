@@ -7,39 +7,59 @@
 struct mg_bpzem {
   enum mgos_bpzem_type bpzem_type;
   uint8_t slave_id;
+  mgos_bpzem_read_data_handler_t read_data;
+  void* read_data_param;
 };
-
-static void print_buffer(struct mg_bpzem* instance, struct mbuf buffer, uint8_t status) {
-  char str[1024];
-  int length = 0;
-  for (int i = 0; i < buffer.len && i < sizeof(str) / 3; i++) {
-    length += sprintf(str + length, "%.2x ", buffer.buf[i]);
-  }
-  if (status == RESP_SUCCESS) {
-    LOG(LL_INFO, ("%f - VALID RESPONSE, Status: %d, Buffer: %.*s", mgos_uptime(), status, length, str));
-    mgos_gpio_blink(2, 1200, 1200);
-  } else {
-    LOG(LL_INFO, ("%f - Invalid response, Status: %d, Buffer: %.*s", mgos_uptime(), status, length, str));
-    mgos_gpio_blink(2, 0, 0);
-  }
-  (void) instance;
-}
 
 void mg_bpzem_read_response_handler(uint8_t status, struct mb_request_info mb_ri, 
                                     struct mbuf response, void* param) {
   struct mg_bpzem* instance = (struct mg_bpzem*)param;
-  print_buffer(instance, response, status);
+  if (instance && instance->read_data) {
+    struct mgos_bpzem_data_response resp;
+    resp.status = status;
+    resp.success = (status == RESP_SUCCESS);
+
+    // char str[1024];
+    // int length = 0;
+    // for (int i = 0; i < buffer.len && i < sizeof(str) / 3; i++) {
+    //   length += sprintf(str + length, "%.2x ", buffer.buf[i]);
+    // }
+
+    // Invoke handler
+    instance->read_data(instance, &resp, instance->read_data_param);
+  }
 }
 
 void mg_bpzem_timer_cb(void* param) {
-  struct mg_bpzem* instance = (struct mg_bpzem*)param;
-  mgos_gpio_blink(2, 500, 500);
-  mb_read_input_registers(instance->slave_id, 0x0000, 8, mg_bpzem_read_response_handler, instance);
+  mgos_bpzem_read_data((mgos_bpzem_t bpzem)param);
 }
 
-mgos_bpzem_t mgos_bpzem_create(uint8_t slave_id, enum mgos_bpzem_type bpzem_type) {
+bool mgos_bpzem_on_read_data(mgos_bpzem_t pzem, mgos_bpzem_read_data_handler_t read_data, void* param) {
+  if (!pzem || !read_data) return false;
+  struct mg_bpzem* instance = (struct mg_bpzem*)pzem;
+  instance->read_data = read_data;
+  instance->read_data_param = param;
+  return true;
+}
+
+bool mgos_bpzem_set_read_data_polling(mgos_bpzem_t pzem, int msecs) {
+  if (pzem) {
+    if (mgos_set_timer(msecs, MGOS_TIMER_REPEAT, mg_bpzem_timer_cb, pzem) != MGOS_INVALID_TIMER_ID) {
+      return true;
+    }
+  }
+  return false;
+}
+
+bool mgos_bpzem_read_data(mgos_bpzem_t pzem) {
+  struct mg_bpzem* instance = (struct mg_bpzem*)pzem;
+  if (!instance || |instance->read_data) return false;
+  return mb_read_input_registers(instance->slave_id, 0x0000, 8, mg_bpzem_read_response_handler, instance);
+}
+
+mgos_bpzem_t mgos_bpzem_create(uint8_t slave_id, enum mgos_bpzem_type pzem_type) {
   // check if the type is correct
-  switch (bpzem_type) {
+  switch (pzem_type) {
     case MGOS_BPZEM_014:
     case MGOS_BPZEM_016:
       break;
@@ -49,19 +69,15 @@ mgos_bpzem_t mgos_bpzem_create(uint8_t slave_id, enum mgos_bpzem_type bpzem_type
 
   struct mg_bpzem *instance = calloc(1, sizeof(struct mg_bpzem));
   if (instance) {
-    instance->bpzem_type = bpzem_type;
+    instance->bpzem_type = pzem_type;
     instance->slave_id = slave_id;
-    mgos_set_timer(5000, MGOS_TIMER_REPEAT, mg_bpzem_timer_cb, instance);
   }
   return (mgos_bpzem_t)instance;
 }
 
 bool mgos_bpzem_init(void) {
-  if (mgos_sys_config_get_modbus_enable()) {
-    if (!mgos_modbus_connect()) {
-      return false;
-    }
+  if (!mgos_modbus_connect()) {
+    return false;
   }
-  mgos_gpio_setup_output(2, 1);
   return true;
 }

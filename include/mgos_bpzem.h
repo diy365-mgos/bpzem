@@ -31,12 +31,41 @@ enum mgos_bpzem_type {
   MGOS_BPZEM_016 = 16,
 };
 
-struct mg_bpzem;
-
 /* Generic and opaque bPZEM instance */
+struct mg_bpzem;
 typedef struct mg_bpzem *mgos_bpzem_t;
 
-mgos_bpzem_t mgos_bpzem_create(uint8_t slave_id, enum mgos_bpzem_type bpzem_type);
+struct mgos_bpzem_data {
+  float voltage;
+  float current;
+  float power;
+  float energy;
+  float frequency;
+  float power_factor;
+  uint16_t alarm;
+};
+
+struct mgos_bpzem_data_response {
+  bool success;
+  uint8_t status;
+  struct mgos_bpzem_data data;
+};
+
+enum mgos_bpzen_read_mode {
+  MGOS_BPZEN_READ_MODE_ONCE = 0;
+  MGOS_BPZEN_READ_MODE_NOW = 1;
+  MGOS_BPZEN_READ_MODE_REPEAT = 2;
+};
+
+typedef void (*mgos_bpzem_read_data_handler_t)(mgos_bpzem_t pzem, struct mgos_bpzem_data_response* resp, void* param);
+
+mgos_bpzem_t mgos_bpzem_create(uint8_t slave_id, enum mgos_bpzem_type pzem_type);
+
+bool mgos_bpzem_on_read_data(mgos_bpzem_t pzem, mgos_bpzem_read_data_handler_t read_data, void* param);
+
+bool mgos_bpzem_set_read_data_polling(mgos_bpzem_t pzem, int msecs);
+
+bool mgos_bpzem_read_data(mgos_bpzem_t pzem);
 
 #ifdef __cplusplus
 }
