@@ -31,7 +31,7 @@ void mg_bpzem_read_response_handler(uint8_t status, struct mb_request_info mb_ri
 }
 
 void mg_bpzem_timer_cb(void* param) {
-  mgos_bpzem_read_data((mgos_bpzem_t bpzem)param);
+  mgos_bpzem_read_data((mgos_bpzem_t)param);
 }
 
 bool mgos_bpzem_on_read_data(mgos_bpzem_t pzem, mgos_bpzem_read_data_handler_t read_data, void* param) {
@@ -53,7 +53,7 @@ bool mgos_bpzem_set_read_data_polling(mgos_bpzem_t pzem, int msecs) {
 
 bool mgos_bpzem_read_data(mgos_bpzem_t pzem) {
   struct mg_bpzem* instance = (struct mg_bpzem*)pzem;
-  if (!instance || |instance->read_data) return false;
+  if (!instance || !instance->read_data) return false;
   return mb_read_input_registers(instance->slave_id, 0x0000, 8, mg_bpzem_read_response_handler, instance);
 }
 

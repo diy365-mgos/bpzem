@@ -51,12 +51,6 @@ struct mgos_bpzem_data_response {
   struct mgos_bpzem_data data;
 };
 
-enum mgos_bpzen_read_mode {
-  MGOS_BPZEN_READ_MODE_ONCE = 0;
-  MGOS_BPZEN_READ_MODE_NOW = 1;
-  MGOS_BPZEN_READ_MODE_REPEAT = 2;
-};
-
 typedef void (*mgos_bpzem_read_data_handler_t)(mgos_bpzem_t pzem, struct mgos_bpzem_data_response* resp, void* param);
 
 mgos_bpzem_t mgos_bpzem_create(uint8_t slave_id, enum mgos_bpzem_type pzem_type);
