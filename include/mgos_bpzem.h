@@ -48,6 +48,7 @@ struct mgos_bpzem_data {
 struct mgos_bpzem_data_response {
   bool success;
   uint8_t status;
+  char* buffer;
   struct mgos_bpzem_data data;
 };
 
@@ -57,7 +58,7 @@ mgos_bpzem_t mgos_bpzem_create(uint8_t slave_id, enum mgos_bpzem_type pzem_type)
 
 bool mgos_bpzem_on_read_data(mgos_bpzem_t pzem, mgos_bpzem_read_data_handler_t read_data, void* param);
 
-bool mgos_bpzem_set_read_data_polling(mgos_bpzem_t pzem, int msecs);
+bool mgos_bpzem_read_data_on_poll(mgos_bpzem_t pzem, int poll_ticks);
 
 bool mgos_bpzem_read_data(mgos_bpzem_t pzem);
 

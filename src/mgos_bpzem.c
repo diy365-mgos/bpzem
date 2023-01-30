@@ -19,11 +19,13 @@ void mg_bpzem_read_response_handler(uint8_t status, struct mb_request_info mb_ri
     resp.status = status;
     resp.success = (status == RESP_SUCCESS);
 
-    // char str[1024];
-    // int length = 0;
-    // for (int i = 0; i < buffer.len && i < sizeof(str) / 3; i++) {
-    //   length += sprintf(str + length, "%.2x ", buffer.buf[i]);
-    // }
+    char str[1024];
+    int length = 0;
+    for (int i = 0; i < response.len && i < sizeof(str) / 3; i++) {
+      length += sprintf(str + length, "%.2x ", response.buf[i]);
+    }
+    str[length] = '\0';
+    resp.buffer = str;
 
     // Invoke handler
     instance->read_data(instance, &resp, instance->read_data_param);
@@ -42,9 +44,9 @@ bool mgos_bpzem_on_read_data(mgos_bpzem_t pzem, mgos_bpzem_read_data_handler_t r
   return true;
 }
 
-bool mgos_bpzem_set_read_data_polling(mgos_bpzem_t pzem, int msecs) {
+bool mgos_bpzem_read_data_on_poll(mgos_bpzem_t pzem, int poll_ticks) {
   if (pzem) {
-    if (mgos_set_timer(msecs, MGOS_TIMER_REPEAT, mg_bpzem_timer_cb, pzem) != MGOS_INVALID_TIMER_ID) {
+    if (mgos_set_timer(poll_ticks, MGOS_TIMER_REPEAT, mg_bpzem_timer_cb, pzem) != MGOS_INVALID_TIMER_ID) {
       return true;
     }
   }
