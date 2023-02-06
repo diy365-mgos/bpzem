@@ -19,6 +19,43 @@ void mg_bpzem_read_response_handler(uint8_t status, struct mb_request_info mb_ri
     resp.status = status;
     resp.success = (status == RESP_SUCCESS);
 
+    // |ID|04|  |V    |A          |P(W)       |E(Wh)      |F(Hz)|PF   |Alarm|
+    //" f8 04 10 08 c3 00 00 00 00 00 00 00 00 00 01 00 00 01 f4 40 e4 00 00 "
+
+    uint8_t slave_id = (response.len ? buffer[0] : 0);
+     
+    if (response.len >= 5) {
+      resp.data.voltage = (parse_value_int(&buffer[3]) * 0.1);
+    }
+    
+    if (response.len >= 9) {
+      resp.data.current = (parse_value_long_32(&buffer[5]) * 0.001);
+    }
+    
+    if (response.len >= 13) {
+      resp.data.power = (parse_value_long_32(&buffer[9]) * 0.1);
+    }
+    
+    if (response.len >= 17) {
+      resp.data.energy = parse_value_long_32(&buffer[13]);
+    }
+    
+    if (response.len >= 19) {
+      resp.data.frequency = (parse_value_int(&buffer[17]) * 0.1);
+    }
+    
+    if (response.len >= 21) {
+      resp.data.power_factor = (parse_value_int(&buffer[19]) * 0.01);
+    }
+
+    if (response.len >= 21) {
+      resp.data.power_factor = (parse_value_int(&buffer[19]) * 0.01);
+    }
+
+    if (response.len >= 23) {
+      resp.data.alarm = parse_value_int(&buffer[21]);
+    }
+
     char str[1024];
     int length = 0;
     for (int i = 0; i < response.len && i < sizeof(str) / 3; i++) {
