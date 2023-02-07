@@ -42,7 +42,7 @@ struct mgos_bpzem_data {
   float energy;
   float frequency;
   float power_factor;
-  int alarm;
+  uint16_t alarm;
 };
 
 struct mgos_bpzem_data_response {
