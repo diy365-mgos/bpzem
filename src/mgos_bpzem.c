@@ -25,35 +25,35 @@ void mg_bpzem_read_response_handler(uint8_t status, struct mb_request_info mb_ri
     uint8_t slave_id = (response.len ? response.buf[0] : 0);
      
     if (response.len >= 5) {
-      resp.data.voltage = (parse_value_int(&response.buf[3]) * 0.1);
+      resp.data.voltage = (parse_value_int((uint8_t *)&response.buf[3]) * 0.1);
     }
     
     if (response.len >= 9) {
-      resp.data.current = (parse_value_long_32(&response.buf[5]) * 0.001);
+      resp.data.current = (parse_value_long_32((uint8_t *)&response.buf[5]) * 0.001);
     }
     
     if (response.len >= 13) {
-      resp.data.power = (parse_value_long_32(&response.buf[9]) * 0.1);
+      resp.data.power = (parse_value_long_32((uint8_t *)&response.buf[9]) * 0.1);
     }
     
     if (response.len >= 17) {
-      resp.data.energy = parse_value_long_32(&response.buf[13]);
+      resp.data.energy = parse_value_long_32((uint8_t *)&response.buf[13]);
     }
     
     if (response.len >= 19) {
-      resp.data.frequency = (parse_value_int(&response.buf[17]) * 0.1);
+      resp.data.frequency = (parse_value_int((uint8_t *)&response.buf[17]) * 0.1);
     }
     
     if (response.len >= 21) {
-      resp.data.power_factor = (parse_value_int(&response.buf[19]) * 0.01);
+      resp.data.power_factor = (parse_value_int((uint8_t *)&response.buf[19]) * 0.01);
     }
 
     if (response.len >= 21) {
-      resp.data.power_factor = (parse_value_int(&response.buf[19]) * 0.01);
+      resp.data.power_factor = (parse_value_int((uint8_t *)&response.buf[19]) * 0.01);
     }
 
     if (response.len >= 23) {
-      resp.data.alarm = parse_value_int(&response.buf[21]);
+      resp.data.alarm = parse_value_int((uint8_t *)&response.buf[21]);
     }
 
     char str[1024];
