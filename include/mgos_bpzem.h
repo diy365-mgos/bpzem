@@ -19,6 +19,7 @@
 #define MGOS_BPZEM_H_
 
 #include <stdbool.h>
+#include <math.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -48,7 +49,6 @@ struct mgos_bpzem_data {
 struct mgos_bpzem_data_response {
   bool success;
   uint8_t status;
-  char* buffer;
   struct mgos_bpzem_data data;
 };
 
