@@ -32,13 +32,13 @@ void mg_bpzem_read_response_handler(uint8_t status, struct mb_request_info mb_ri
       //" f8 04 10 08 c3 00 00 00 00 00 00 00 00 00 01 00 00 01 f4 40 e4 00 00 "
       
       struct mgos_bpzem_data_response resp;
-      resp.data.voltage = (response.len >= 5 ? (parse_value_int(response.buf+3) * 0.1) : 0);
-      resp.data.current = (response.len >= 9 ? (parse_value_long_32(response.buf+5) * 0.001) : 0);
-      resp.data.power = (response.len >= 13 ? (parse_value_long_32(response.buf+9) * 0.1) : 0);
-      resp.data.energy = (response.len >= 17 ? parse_value_long_32(response.buf+13) : 0);
-      resp.data.frequency = (response.len >= 19 ? (parse_value_int(response.buf+17) * 0.1) : 0);
-      resp.data.power_factor = (response.len >= 21 ? (parse_value_int(response.buf+19) * 0.01) : 0);
-      resp.data.alarm = (response.len >= 23 ? parse_value_int(response.buf+21) : 0);
+      resp.data.voltage = (response.len >= 5 ? (parse_value_int((uint8_t*)response.buf+3) * 0.1) : 0);
+      resp.data.current = (response.len >= 9 ? (parse_value_long_32((uint8_t*)response.buf+5) * 0.001) : 0);
+      resp.data.power = (response.len >= 13 ? (parse_value_long_32((uint8_t*)response.buf+9) * 0.1) : 0);
+      resp.data.energy = (response.len >= 17 ? parse_value_long_32((uint8_t*)response.buf+13) : 0);
+      resp.data.frequency = (response.len >= 19 ? (parse_value_int((uint8_t*)response.buf+17) * 0.1) : 0);
+      resp.data.power_factor = (response.len >= 21 ? (parse_value_int((uint8_t*)response.buf+19) * 0.01) : 0);
+      resp.data.alarm = (response.len >= 23 ? parse_value_int((uint8_t*)response.buf+21) : 0);
     }
 
     // Invoke handler
