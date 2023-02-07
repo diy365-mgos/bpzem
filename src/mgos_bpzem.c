@@ -23,7 +23,7 @@ void mg_bpzem_read_response_handler(uint8_t status, struct mb_request_info mb_ri
     //" f8 04 10 08 c3 00 00 00 00 00 00 00 00 00 01 00 00 01 f4 40 e4 00 00 "
 
     uint8_t slave_id = (response.len ? response.buf[0] : 0);
-    if (instance.slave_id != slave_id) {
+    if (instance->slave_id != slave_id) {
       LOG(LL_ERROR, ("Invalid response. A response for slave %.2x has been sent to %.2x.",
         slave_id, instance->slave_id));
       return;
