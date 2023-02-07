@@ -16,30 +16,27 @@ void mg_bpzem_read_response_handler(uint8_t status, struct mb_request_info mb_ri
   
   struct mg_bpzem* instance = (struct mg_bpzem*)param;
   if (instance && instance->read_data) {
+    struct mgos_bpzem_data_response resp;
     resp.status = status;
     resp.success = (status == RESP_SUCCESS);
 
-    if (resp.success) {
-      uint8_t slave_id = (response.len ? response.buf[0] : 0);
-      if (instance->slave_id != slave_id) {
-        LOG(LL_ERROR, ("Invalid response. A response for slave %.2x has been sent to %.2x.",
-          slave_id, instance->slave_id));
-        return;
-      }
-
-      // RESPONSE FORMAT
-      // |ID|04|  |V    |A          |P(W)       |E(Wh)      |F(Hz)|PF   |Alarm|
-      //" f8 04 10 08 c3 00 00 00 00 00 00 00 00 00 01 00 00 01 f4 40 e4 00 00 "
-      
-      struct mgos_bpzem_data_response resp;
-      resp.data.voltage = (response.len >= 5 ? (parse_value_int((uint8_t*)response.buf+3) * 0.1) : 0);
-      resp.data.current = (response.len >= 9 ? (parse_value_long_32((uint8_t*)response.buf+5) * 0.001) : 0);
-      resp.data.power = (response.len >= 13 ? (parse_value_long_32((uint8_t*)response.buf+9) * 0.1) : 0);
-      resp.data.energy = (response.len >= 17 ? parse_value_long_32((uint8_t*)response.buf+13) : 0);
-      resp.data.frequency = (response.len >= 19 ? (parse_value_int((uint8_t*)response.buf+17) * 0.1) : 0);
-      resp.data.power_factor = (response.len >= 21 ? (parse_value_int((uint8_t*)response.buf+19) * 0.01) : 0);
-      resp.data.alarm = (response.len >= 23 ? parse_value_int((uint8_t*)response.buf+21) : 0);
+    uint8_t slave_id = (response.len ? response.buf[0] : 0);
+    if (resp.success && (instance->slave_id != slave_id)) {
+      LOG(LL_ERROR, ("Invalid response. A response for slave %.2x has been sent to %.2x.",
+        slave_id, instance->slave_id));
+      return;
     }
+    
+    // RESPONSE FORMAT
+    // |ID|04|  |V    |A          |P(W)       |E(Wh)      |F(Hz)|PF   |Alarm|
+    //" f8 04 10 08 c3 00 00 00 00 00 00 00 00 00 01 00 00 01 f4 40 e4 00 00 "
+    resp.data.voltage = (response.len >= 5 ? (parse_value_int((uint8_t*)response.buf+3) * 0.1) : 0);
+    resp.data.current = (response.len >= 9 ? (parse_value_long_32((uint8_t*)response.buf+5) * 0.001) : 0);
+    resp.data.power = (response.len >= 13 ? (parse_value_long_32((uint8_t*)response.buf+9) * 0.1) : 0);
+    resp.data.energy = (response.len >= 17 ? parse_value_long_32((uint8_t*)response.buf+13) : 0);
+    resp.data.frequency = (response.len >= 19 ? (parse_value_int((uint8_t*)response.buf+17) * 0.1) : 0);
+    resp.data.power_factor = (response.len >= 21 ? (parse_value_int((uint8_t*)response.buf+19) * 0.01) : 0);
+    resp.data.alarm = (response.len >= 23 ? parse_value_int((uint8_t*)response.buf+21) : 0);
 
     // Invoke handler
     instance->read_data(instance, &resp, instance->read_data_param);
