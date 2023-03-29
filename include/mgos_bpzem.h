@@ -56,6 +56,8 @@ typedef void (*mgos_bpzem_read_data_handler_t)(mgos_bpzem_t pzem, struct mgos_bp
 
 mgos_bpzem_t mgos_bpzem_create(uint8_t slave_id, enum mgos_bpzem_type pzem_type);
 
+uint8_t mgos_bpzem_get_id(mgos_bpzem_t pzem);
+
 bool mgos_bpzem_on_read_data(mgos_bpzem_t pzem, mgos_bpzem_read_data_handler_t read_data, void* param);
 
 bool mgos_bpzem_read_data_on_poll(mgos_bpzem_t pzem, int poll_ticks);

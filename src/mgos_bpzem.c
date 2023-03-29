@@ -88,6 +88,10 @@ mgos_bpzem_t mgos_bpzem_create(uint8_t slave_id, enum mgos_bpzem_type pzem_type)
   return (mgos_bpzem_t)instance;
 }
 
+uint8_t mgos_bpzem_get_id(mgos_bpzem_t pzem) {
+  return (pzem ? ((struct mg_bpzem *)pzem)->slave_id : 0);
+}
+
 bool mgos_bpzem_init(void) {
   return true;
 }
