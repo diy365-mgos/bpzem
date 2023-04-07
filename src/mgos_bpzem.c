@@ -46,7 +46,8 @@ void mg_bpzem_read_response_handler(uint8_t status, struct mb_request_info mb_ri
         instance->slave_id, resp.status,
         resp.data.voltage, resp.data.current,
         resp.data.power, resp.data.energy,
-        resp.data.frequency, resp.data.power_factor, resp.data.alarm)); 
+        resp.data.frequency, resp.data.power_factor,
+        resp.data.alarm)); 
     } else {
       LOG(LL_ERROR, ("Error reading data from PZEM (%.2x), status=%.2x",
         instance->slave_id, resp.status)); 
